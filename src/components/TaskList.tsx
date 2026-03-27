@@ -1,20 +1,21 @@
-import TodoListItem from "./TaskListItem"
-import type { Task } from "../types/Task";
+import TaskListItem from "./TaskListItem"
+import { useTodo } from "../contexts/TodoContext";
 
-interface TodoListProps {
-  tasks: Task[];
-  buttonLabel: string;
-  onButtonClick: (id: number) => void;
+interface TaskListProps {
+  type: "todo" | "done";
 }
 
-function TodoList({tasks, buttonLabel, onButtonClick}: TodoListProps) {
+function TaskList({ type }: TaskListProps) {
+  const { todoTasks, doneTasks } = useTodo();
+  const tasks = type === "todo" ? todoTasks : doneTasks;
+
   return (
     <ul id="todo-list" className="render-container__list">
       {tasks.map((task) => (
-        <TodoListItem key={task.id} task={task} buttonLabel={buttonLabel} onButtonClick={onButtonClick} />
+        <TaskListItem key={task.id} task={task} type={type} />
       ))}
     </ul>
   )
 }
 
-export default TodoList;
+export default TaskList;

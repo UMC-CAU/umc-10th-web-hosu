@@ -1,12 +1,16 @@
 import type { Task } from "../types/Task";
+import { useTodo } from "../contexts/TodoContext";
 
-interface TodoListItemProps {
+interface TaskListItemProps {
   task: Task;
-  buttonLabel: string;
-  onButtonClick: (id: number) => void;
+  type: "todo" | "done";
 }
 
-function TodoListItem({task, buttonLabel, onButtonClick}: TodoListItemProps) {
+function TaskListItem({ task, type }: TaskListItemProps) {
+  const { completeTask, deleteTask } = useTodo();
+  const buttonLabel = type === "todo" ? "완료" : "삭제";
+  const onButtonClick = type === "todo" ? completeTask : deleteTask;
+
   return (
     <li key={task.id} className="render-container__item">
       <p className="render-container__item-text">
@@ -17,4 +21,4 @@ function TodoListItem({task, buttonLabel, onButtonClick}: TodoListItemProps) {
   )
 }
 
-export default TodoListItem;
+export default TaskListItem;

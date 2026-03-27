@@ -1,16 +1,15 @@
-interface TodoformProps {
-  inputValue: string;
-  setInputValue: (value: string) => void;
-  addTodo: () => void;
-}
+import { useTodo } from "../contexts/TodoContext";
 
-function TodoForm({inputValue, setInputValue, addTodo}: TodoformProps) {
+
+function TodoForm() {
+  const { inputValue, setInputValue, addTodoTask } = useTodo();
+
   return (
     <form id="todo-form" 
           className="todo-container__form" 
           onSubmit={(e) => 
           {e.preventDefault(); // Reload Prevent
-            addTodo(); 
+            addTodoTask(); 
             setInputValue(""); // Reset after adding
         }}>
           <input type="text" 
