@@ -1,11 +1,11 @@
-interface TodoListTitleProps {
+interface TaskListTitleProps {
   titleLabel: string;
 }
 
-function TodoListTitle({titleLabel}: TodoListTitleProps) {
+function TaskListTitle({titleLabel}: TaskListTitleProps) {
   return (
-    <h2 className="render-container__title">{titleLabel}</h2>
+    <h2 className="text-lg flex flex-row justify-center">{titleLabel}</h2>
   )
 }
 
-export default TodoListTitle;
+export default TaskListTitle;

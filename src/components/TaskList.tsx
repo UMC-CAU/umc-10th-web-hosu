@@ -10,7 +10,7 @@ function TaskList({ type }: TaskListProps) {
   const tasks = type === "todo" ? todoTasks : doneTasks;
 
   return (
-    <ul id="todo-list" className="render-container__list">
+    <ul id="todo-list" className="list-none p-0 m-0">
       {tasks.map((task) => (
         <TaskListItem key={task.id} task={task} type={type} />
       ))}
