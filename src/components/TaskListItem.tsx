@@ -3,13 +3,13 @@ import { useTodo } from "../contexts/TodoContext";
 
 interface TaskListItemProps {
   task: Task;
-  type: "todo" | "done";
+  status: "todo" | "done";
 }
 
-function TaskListItem({ task, type }: TaskListItemProps) {
+function TaskListItem({ task, status }: TaskListItemProps) {
   const { completeTask, deleteTask } = useTodo();
-  const buttonLabel = type === "todo" ? "완료" : "삭제";
-  const onButtonClick = type === "todo" ? completeTask : deleteTask;
+  const buttonLabel = (status === "todo") ? "완료" : "삭제";
+  const handleClick = (status === "todo") ? completeTask : deleteTask;
 
   return (
     <li
@@ -21,7 +21,7 @@ function TaskListItem({ task, type }: TaskListItemProps) {
       </p>
       <button
         className="bg-red-600 text-white border-none px-2.5 py-1.5 cursor-pointer rounded-md text-xs transition-colors duration-300 hover:bg-red-700"
-        onClick={() => onButtonClick(task.id)}
+        onClick={() => handleClick(task.id)}
       >
         {buttonLabel}
       </button>

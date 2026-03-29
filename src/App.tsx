@@ -19,16 +19,16 @@ function AppContent() {
         </button>
         <h1 className={`text-2xl mb-4 ${isDark ? "text-white" : ""}`}>HOSU TODO</h1>
         <TodoForm isDark={isDark} />
-        <div className="flex justify-between gap-5">
-          <div className={`w-full text-left ${isDark ? "bg-[#1a1a2e]" : ""}`}>
+        <main className="flex justify-between gap-5">
+          <section className={`w-full text-left ${isDark ? "bg-[#1a1a2e]" : ""}`}>
             <TaskListTitle titleLabel="할 일"/>
-            <TaskList type="todo" />
-          </div>
-          <div className={`w-full text-left ${isDark ? "bg-[#1a1a2e]" : ""}`}>
+            <TaskList status="todo" />
+          </section>
+          <section className={`w-full text-left ${isDark ? "bg-[#1a1a2e]" : ""}`}>
             <TaskListTitle titleLabel="완료"/>
-            <TaskList type="done" />
-          </div>
-        </div>
+            <TaskList status="done" />
+          </section>
+        </main>
       </div>
     </TodoProvider>
   )

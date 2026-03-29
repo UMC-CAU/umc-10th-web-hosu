@@ -2,17 +2,17 @@ import TaskListItem from "./TaskListItem"
 import { useTodo } from "../contexts/TodoContext";
 
 interface TaskListProps {
-  type: "todo" | "done";
+  status: "todo" | "done";
 }
 
-function TaskList({ type }: TaskListProps) {
+function TaskList({ status }: TaskListProps) {
   const { todoTasks, doneTasks } = useTodo();
-  const tasks = type === "todo" ? todoTasks : doneTasks;
+  const tasks = (status === "todo") ? todoTasks : doneTasks;
 
   return (
     <ul id="todo-list" className="list-none p-0 m-0">
       {tasks.map((task) => (
-        <TaskListItem key={task.id} task={task} type={type} />
+        <TaskListItem key={task.id} task={task} status={status} />
       ))}
     </ul>
   )
