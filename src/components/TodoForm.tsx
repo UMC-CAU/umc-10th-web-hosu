@@ -1,10 +1,8 @@
 import { useTodo } from "../contexts/TodoContext";
+import { useTheme } from "../contexts/ThemeContext";
 
-interface TodoFormProps {
-  isDark: boolean;
-}
-
-function TodoForm({ isDark }: TodoFormProps) {
+function TodoForm() {
+  const { isDark } = useTheme();
   const { inputValue, setInputValue, addTodoTask } = useTodo();
 
   return (
@@ -20,7 +18,7 @@ function TodoForm({ isDark }: TodoFormProps) {
       <input
         type="text"
         id="todo-input"
-        className={`flex-1 p-2 border rounded-md text-sm ${isDark ? "bg-[#0f3460] text-[#e0e0e0] border-[#e0e0e0]" : "border-gray-300"}`}
+        className={`flex-1 p-2 border rounded-md text-sm ${isDark === "black" ? "bg-[#0f3460] text-[#e0e0e0] border-[#e0e0e0]" : "border-gray-300"}`}
         placeholder="할 일 입력"
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
