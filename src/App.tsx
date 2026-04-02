@@ -1,45 +1,41 @@
-import './index.css';
-import { TodoProvider } from './contexts/TodoContext';
-import TodoForm from "./components/TodoForm";
-import TaskListTitle from "./components/TaskListTitle";
-import TaskList from "./components/TaskList";
-import { ThemeProvider, useTheme } from './contexts/ThemeContext';
-
-function AppContent() {
-  const { isDark, toggleTheme } = useTheme();
-
-  return (
-    <TodoProvider>
-      <div className={`p-5 rounded-xl shadow-md w-[350px] text-center ${isDark === "black" ? "bg-[#1a1a2e] text-[#e0e0e0]" : "bg-white"}`}>
-        <button
-          className={`cursor-pointer bg-transparent border-none ${isDark === "black" ? "text-white" : ""}`}
-          onClick={toggleTheme}
-        >
-          {isDark === "black" ? "Light Mode ☀️" : "Dark Mode 🌙"}
-        </button>
-        <h1 className={`text-2xl mb-4 ${isDark === "black" ? "text-white" : ""}`}>HOSU TODO</h1>
-        <TodoForm />
-        <main className="flex justify-between gap-5">
-          <section className={`w-full text-left ${isDark === "black" ? "bg-[#1a1a2e]" : ""}`}>
-            <TaskListTitle titleLabel="할 일"/>
-            <TaskList status="todo" />
-          </section>
-          <section className={`w-full text-left ${isDark === "black" ? "bg-[#1a1a2e]" : ""}`}>
-            <TaskListTitle titleLabel="완료"/>
-            <TaskList status="done" />
-          </section>
-        </main>
-      </div>
-    </TodoProvider>
-  )
-}
+import { useEffect, useState } from "react";
+import type { Movie, MovieResponse } from "./types/Movie";
+import axios from "axios";
+import "./index.css";
+import MoviePoster from "./components/MoviePoster";
 
 function App() {
+  const [movies, setMovies] = useState<Movie[]>([]);
+  
+  useEffect(() => {
+    const fetchMovies = async () => {
+      const pages = [1, 2, 3];
+      const responses = await Promise.all( // 여러 비동기 작업을 동시에 실행하고, 전부 완료될 때까지 기다리는 메서드
+        pages.map((page) =>
+        axios.get<MovieResponse>(
+          `https://api.themoviedb.org/3/movie/popular?language=en-US&page=${page}`,
+            {
+              headers: {
+                Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
+              },
+            }
+          )
+        )
+      );
+      setMovies(responses.flatMap((res) => res.data.results)); // 2차원 배열을 1차원 배열로 변환해줌
+    };
+
+    fetchMovies();
+  }, []);
   return (
-    <ThemeProvider>
-      <AppContent />
-    </ThemeProvider>
+    <ul className="grid grid-cols-5 gap-4 list-none p-0 mx-50 my-10">
+      {movies?.map((movie) => (
+        <MoviePoster id={movie.id} poster_path={movie.poster_path} title={movie.title} overview={movie.overview} />
+      ))}
+    </ul>
   )
 }
+
+
 
 export default App;

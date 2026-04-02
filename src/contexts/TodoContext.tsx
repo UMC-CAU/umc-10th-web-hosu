@@ -1,6 +1,6 @@
 import { createContext, useState, useContext } from "react";
 import type { ReactNode } from "react";
-import type { Task } from "../types/Task";
+import type { Task } from "../types/Movie";
 
 interface TodoContextType {
   todoTasks: Task[];
