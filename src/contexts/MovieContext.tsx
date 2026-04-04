@@ -26,21 +26,26 @@ export const MovieProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const fetchMovies = async () => {
       setIsLoading(true); // 로딩중
-      const pages = [1, 2, 3];
-      const responses = await Promise.all(
-        pages.map((page) =>
-          axios.get<MovieResponse>(
-            `https://api.themoviedb.org/3/movie/${movieType}?language=en-US&page=${page}`,
-            {
-              headers: {
-                Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
-              },
-            }
+      try {
+        const pages = [1, 2, 3];
+        const responses = await Promise.all(
+          pages.map((page) =>
+            axios.get<MovieResponse>(
+              `https://api.themoviedb.org/3/movie/${movieType}?language=en-US&page=${page}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
+                },
+              }
+            )
           )
-        )
-      );
-      setMovies(responses.flatMap((res) => res.data.results));
-      setIsLoading(false); // 로딩완료
+        );
+        setMovies(responses.flatMap((res) => res.data.results));
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchMovies();

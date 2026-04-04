@@ -6,11 +6,13 @@ import PopularMovie from "./pages/PopularMovie";
 import ComingSoonMovie from "./pages/ComingSoonMovie";
 import HighRateMovie from "./pages/HighRateMovie";
 import OnScreenMovie from "./pages/OnScreenMovie";
+import NotFound from "./pages/NotFound";
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <RootLayout />,
+    errorElement: <NotFound />,
     children: [
       {
         index: true,

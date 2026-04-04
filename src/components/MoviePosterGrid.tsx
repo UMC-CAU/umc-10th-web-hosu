@@ -13,11 +13,11 @@ function MoviePosterGrid() {
   }
 
   return (
-    <ul className="grid grid-cols-5 gap-4 list-none p-0 mx-50 my-10">
+    <section className="grid grid-cols-5 gap-4 list-none p-0 mx-50 my-10">
       {movies?.map((movie) => (
         <MoviePoster key={movie.id} id={movie.id} poster_path={movie.poster_path} title={movie.title} overview={movie.overview} />
       ))}
-    </ul>
+    </section>
   );
 }
 
