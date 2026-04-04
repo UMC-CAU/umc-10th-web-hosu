@@ -1,45 +1,49 @@
-import './index.css';
-import { TodoProvider } from './contexts/TodoContext';
-import TodoForm from "./components/TodoForm";
-import TaskListTitle from "./components/TaskListTitle";
-import TaskList from "./components/TaskList";
-import { ThemeProvider, useTheme } from './contexts/ThemeContext';
+import "./index.css";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import RootLayout from "./layout/root-layout";
+import { MovieProvider } from "./contexts/MovieContext";
+import PopularMovie from "./pages/PopularMovie";
+import ComingSoonMovie from "./pages/ComingSoonMovie";
+import HighRateMovie from "./pages/HighRateMovie";
+import OnScreenMovie from "./pages/OnScreenMovie";
+import NotFound from "./pages/NotFound";
 
-function AppContent() {
-  const { isDark, toggleTheme } = useTheme();
-
-  return (
-    <TodoProvider>
-      <div className={`p-5 rounded-xl shadow-md w-[350px] text-center ${isDark === "black" ? "bg-[#1a1a2e] text-[#e0e0e0]" : "bg-white"}`}>
-        <button
-          className={`cursor-pointer bg-transparent border-none ${isDark === "black" ? "text-white" : ""}`}
-          onClick={toggleTheme}
-        >
-          {isDark === "black" ? "Light Mode ☀️" : "Dark Mode 🌙"}
-        </button>
-        <h1 className={`text-2xl mb-4 ${isDark === "black" ? "text-white" : ""}`}>HOSU TODO</h1>
-        <TodoForm />
-        <main className="flex justify-between gap-5">
-          <section className={`w-full text-left ${isDark === "black" ? "bg-[#1a1a2e]" : ""}`}>
-            <TaskListTitle titleLabel="할 일"/>
-            <TaskList status="todo" />
-          </section>
-          <section className={`w-full text-left ${isDark === "black" ? "bg-[#1a1a2e]" : ""}`}>
-            <TaskListTitle titleLabel="완료"/>
-            <TaskList status="done" />
-          </section>
-        </main>
-      </div>
-    </TodoProvider>
-  )
-}
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <RootLayout />,
+    errorElement: <NotFound />,
+    children: [
+      {
+        index: true,
+        element: <PopularMovie />,
+      },
+      {
+        path: 'popular',
+        element: <PopularMovie />,
+      },
+      {
+        path: 'coming-soon',
+        element: <ComingSoonMovie />,
+      },
+      {
+        path: 'high-rate',
+        element: <HighRateMovie />,
+      },
+      {
+        path: 'on-screen',
+        element: <OnScreenMovie />,
+      },
+    ],
+  },
+]);
 
 function App() {
   return (
-    <ThemeProvider>
-      <AppContent />
-    </ThemeProvider>
-  )
+    <MovieProvider>
+      <RouterProvider router={router} />
+    </MovieProvider>
+  );
 }
 
 export default App;
