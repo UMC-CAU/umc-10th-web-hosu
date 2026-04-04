@@ -2,7 +2,11 @@ import { useMovies } from "../contexts/MovieContext";
 import MoviePoster from "./MoviePoster";
 
 function MoviePosterGrid() {
-  const { movies, isLoading } = useMovies();
+  const { movies, isLoading, isError } = useMovies();
+
+  if (isError) {
+    return <h1>에러가 발생했습니다.</h1>;
+  }
 
   if (isLoading) {
     return (

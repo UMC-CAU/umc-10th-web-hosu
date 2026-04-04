@@ -9,6 +9,9 @@ interface MovieContextType {
   movieType: MovieType;
   setMovieType: (type: MovieType) => void;
   isLoading: boolean;
+  isError: boolean;
+  page: number;
+  setPage: (page: number) => void;
 }
 
 const MovieContext = createContext<MovieContextType>({
@@ -16,43 +19,45 @@ const MovieContext = createContext<MovieContextType>({
   movieType: 'popular',
   setMovieType: () => {},
   isLoading: false,
+  isError: false,
+  page: 1,
+  setPage: () => {},
 });
 
 export const MovieProvider = ({ children }: { children: React.ReactNode }) => {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [movieType, setMovieType] = useState<MovieType>('popular');
   const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     const fetchMovies = async () => {
-      setIsLoading(true); // 로딩중
+      setIsLoading(true);
+      setIsError(false);
       try {
-        const pages = [1, 2, 3];
-        const responses = await Promise.all(
-          pages.map((page) =>
-            axios.get<MovieResponse>(
-              `https://api.themoviedb.org/3/movie/${movieType}?language=en-US&page=${page}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
-                },
-              }
-            )
-          )
+        const response = await axios.get<MovieResponse>(
+          `https://api.themoviedb.org/3/movie/${movieType}?language=en-US&page=${page}`,
+          {
+            headers: {
+              Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
+            },
+          }
         );
-        setMovies(responses.flatMap((res) => res.data.results));
+        setMovies(response.data.results);
       } catch (error) {
         console.error(error);
+        setIsError(true);
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchMovies();
-  }, [movieType]);
+  }, [movieType, page]);
 
   return (
-    <MovieContext.Provider value={{ movies, movieType, setMovieType, isLoading }}>
+    <MovieContext.Provider value={{ movies, movieType, setMovieType, isLoading, isError, page, setPage }}>
       {children}
     </MovieContext.Provider>
   );

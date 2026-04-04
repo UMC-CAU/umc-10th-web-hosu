@@ -1,6 +1,9 @@
 import { NavLink } from "react-router-dom";
+import { useMovies } from "../contexts/MovieContext";
 
 const Navbar = () => {
+  const { page, setPage } = useMovies();
+
   return (
     <>
       <nav className="flex gap-6 p-4">
@@ -11,9 +14,9 @@ const Navbar = () => {
         <NavLink to="/coming-soon" className={({ isActive }) => `${isActive ? "font-bold text-green-300" : ""}`}>개봉 예정</NavLink>
       </nav>
       <div className="flex items-center justify-center gap-4 my-4">
-        <button className="px-4 py-2 bg-gray-300 rounded-lg">{'<'}</button>
-        <span>1 페이지</span>
-        <button className="px-4 py-2 bg-purple-300 rounded-lg">{'>'}</button>
+        <button className={`px-4 py-2 rounded-lg ${page === 1 ? "bg-gray-300" : "bg-purple-300 hover:bg-green-300"}`} onClick={() => setPage(page - 1)} disabled={page === 1}>{'<'}</button>
+        <span>{page} 페이지</span>
+        <button className="px-4 py-2 bg-purple-300 rounded-lg hover:bg-green-300" onClick={() => setPage(page + 1)}>{'>'}</button>
       </div>
     </>
   )
