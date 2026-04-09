@@ -1,8 +1,20 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { useMovies } from "../contexts/MovieContext";
 
 const Navbar = () => {
   const { page, setPage } = useMovies();
+  const location = useLocation();
+  const isDetailPage = location.pathname.startsWith("/movie/");
+
+  if (isDetailPage) {
+    return (
+      <nav className="p-4">
+        <button onClick={() => window.history.back()} className="text-black">
+          &lt; 뒤로가기
+        </button>
+      </nav>
+    );
+  }
 
   return (
     <>

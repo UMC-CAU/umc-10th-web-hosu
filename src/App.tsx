@@ -7,6 +7,8 @@ import ComingSoonMovie from "./pages/ComingSoonMovie";
 import HighRateMovie from "./pages/HighRateMovie";
 import OnScreenMovie from "./pages/OnScreenMovie";
 import NotFound from "./pages/NotFound";
+import MovieDetail from "./pages/MovieDetail";
+import { MovieDetailProvider } from "./contexts/MovieDetailContext";
 
 const router = createBrowserRouter([
   {
@@ -33,6 +35,10 @@ const router = createBrowserRouter([
       {
         path: 'on-screen',
         element: <OnScreenMovie />,
+      },
+      {
+        path: 'movie/:movieId',
+        element: <MovieDetailProvider><MovieDetail /></MovieDetailProvider>
       },
     ],
   },

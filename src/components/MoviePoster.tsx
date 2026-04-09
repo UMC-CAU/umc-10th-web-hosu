@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import "../index.css";
 
 interface MoviePosterProps {
@@ -8,8 +9,10 @@ interface MoviePosterProps {
 }
 
 function MoviePoster({ id, poster_path, title, overview }: MoviePosterProps) {
+  const navigate = useNavigate();
+
   return (
-    <li key={id} className="relative group">
+    <li key={id} className="relative group cursor-pointer" onClick={() => navigate(`/movie/${id}`)}>
       <img
         src={`https://image.tmdb.org/t/p/original${poster_path}`}
         className="w-full rounded-xl group-hover:blur-sm transition duration-100" 
