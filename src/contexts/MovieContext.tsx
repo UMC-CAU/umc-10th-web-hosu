@@ -1,6 +1,6 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import type { Movie, MovieResponse } from "../types/Movie";
-import axios from "axios";
+import useCustomFetch from "../hooks/useCustomFetch";
 
 type MovieType = 'popular' | 'now_playing' | 'top_rated' | 'upcoming';
 
@@ -25,36 +25,14 @@ const MovieContext = createContext<MovieContextType>({
 });
 
 export const MovieProvider = ({ children }: { children: React.ReactNode }) => {
-  const [movies, setMovies] = useState<Movie[]>([]);
   const [movieType, setMovieType] = useState<MovieType>('popular');
-  const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
   const [page, setPage] = useState(1);
 
-  useEffect(() => {
-    const fetchMovies = async () => {
-      setIsLoading(true);
-      setIsError(false);
-      try {
-        const response = await axios.get<MovieResponse>(
-          `https://api.themoviedb.org/3/movie/${movieType}?language=en-US&page=${page}`,
-          {
-            headers: {
-              Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
-            },
-          }
-        );
-        setMovies(response.data.results);
-      } catch (error) {
-        console.error(error);
-        setIsError(true);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const { data, isLoading, isError } = useCustomFetch<MovieResponse>(
+    `https://api.themoviedb.org/3/movie/${movieType}?language=en-US&page=${page}`
+  );
 
-    fetchMovies();
-  }, [movieType, page]);
+  const movies: Movie[] = data?.results ?? [];
 
   return (
     <MovieContext.Provider value={{ movies, movieType, setMovieType, isLoading, isError, page, setPage }}>
