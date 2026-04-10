@@ -1,7 +1,12 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
 import type { MovieDetailData, Cast, Crew } from "../types/Movie";
+import useCustomFetch from "../hooks/useCustomFetch";
+
+interface CreditsResponse {
+  cast: Cast[];
+  crew: Crew[];
+}
 
 interface MovieDetailContextType {
   movie: MovieDetailData | null;
@@ -21,45 +26,19 @@ const MovieDetailContext = createContext<MovieDetailContextType>({
 
 export const MovieDetailProvider = ({ children }: { children: React.ReactNode }) => {
   const { movieId } = useParams();
-  const [movie, setMovie] = useState<MovieDetailData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isError, setIsError] = useState(false);
-  const [cast, setCast] = useState<Cast[]>([]);
-  const [crew, setCrew] = useState<Crew[]>([]);
+  
+  const { data: movie, isLoading: movieLoading, isError: movieError } = useCustomFetch<MovieDetailData>(
+    `https://api.themoviedb.org/3/movie/${movieId}?language=ko-KR`
+  );
 
-  useEffect(() => {
-    const fetchMovie = async () => {
-      setIsLoading(true);
-      setIsError(false);
-      try {
-        const response = await axios.get<MovieDetailData>(
-          `https://api.themoviedb.org/3/movie/${movieId}?language=ko-KR`,
-          {
-            headers: {
-              Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
-            },
-          }
-        );
-        const creditResponse = await axios.get(
-          `https://api.themoviedb.org/3/movie/${movieId}/credits?language=ko-KR`,
-          {
-            headers: {
-              Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
-            },
-          }
-        );
-        setCast(creditResponse.data.cast.slice(0, 10));
-        setCrew(creditResponse.data.crew.filter((c: Crew) => c.job === "Director"));
-        setMovie(response.data);
-      } catch (error) {
-        console.error(error);
-        setIsError(true);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchMovie();
-  }, [movieId]);
+  const { data: credits, isLoading: creditsLoading, isError: creditsError } = useCustomFetch<CreditsResponse>(
+    `https://api.themoviedb.org/3/movie/${movieId}/credits?language=ko-KR`
+  );
+
+  const cast = credits?.cast.slice(0, 10) ?? [];
+  const crew = credits?.crew.filter((c) => c.job === "Director") ?? [];
+  const isLoading = movieLoading || creditsLoading;
+  const isError = movieError || creditsError;
 
   return (
     <MovieDetailContext.Provider value={{ movie, cast, crew, isLoading, isError }}>
