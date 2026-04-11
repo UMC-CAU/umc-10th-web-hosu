@@ -1,5 +1,7 @@
-const NotFound = () => {
-  return <h1>Not Found Page</h1>
-};
-
-export default NotFound;
+export default function NotFound() {
+  return (
+    <div className="min-h-screen bg-black text-white flex items-center justify-center">
+      <h1 className="text-2xl">404 - 페이지를 찾을 수 없습니다.</h1>
+    </div>
+  );
+}
