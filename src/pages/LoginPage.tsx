@@ -1,10 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import useForm from "../hooks/useForm";
+import { login } from "../apis/auth";
 
 function LoginPage() {
   const navigate = useNavigate();
 
-  const { errors, touched, getInputProps, isValid } = useForm({
+  const { values, errors, touched, getInputProps, isValid } = useForm({
     initialValues: { email: "", password: "" },
     validate: (values) => {
       const errors: { email?: string; password?: string } = {};
@@ -17,6 +18,11 @@ function LoginPage() {
       return errors;
     },
   });
+
+  const onSubmit = async () => {
+    await login(values.email, values.password);
+    navigate("/");
+  };
 
   return (
     <div>
@@ -68,6 +74,7 @@ function LoginPage() {
 
           <button
             disabled={!isValid}
+            onClick={onSubmit}
             className={`w-full py-3 rounded transition ${
               !isValid
                 ? "bg-gray-700 text-gray-400 cursor-not-allowed"
