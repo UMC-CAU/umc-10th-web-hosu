@@ -1,10 +1,19 @@
 import { useNavigate } from "react-router-dom";
+import { useGoogleLogin } from "@react-oauth/google";
 import useForm from "../hooks/useForm";
+import { login } from "../apis/auth";
 
 function LoginPage() {
   const navigate = useNavigate();
 
-  const { errors, touched, getInputProps, isValid } = useForm({
+  const googleLogin = useGoogleLogin({
+    onSuccess: (tokenResponse) => {
+      localStorage.setItem("accessToken", tokenResponse.access_token);
+      navigate("/");
+    },
+  });
+
+  const { values, errors, touched, getInputProps, isValid } = useForm({
     initialValues: { email: "", password: "" },
     validate: (values) => {
       const errors: { email?: string; password?: string } = {};
@@ -18,6 +27,11 @@ function LoginPage() {
     },
   });
 
+  const onSubmit = async () => {
+    await login(values.email, values.password);
+    navigate("/");
+  };
+
   return (
     <div>
       <div className="flex justify-center mt-24">
@@ -27,7 +41,7 @@ function LoginPage() {
             <h1 className="text-xl font-semibold w-full text-center">로그인</h1>
           </div>
 
-          <button className="flex items-center justify-center gap-3 w-full border border-gray-600 py-3 rounded hover:bg-gray-800 transition">
+          <button onClick={() => googleLogin()} className="flex items-center justify-center gap-3 w-full border border-gray-600 py-3 rounded hover:bg-gray-800 transition">
             <img
               src="https://www.svgrepo.com/show/475656/google-color.svg"
               alt="google"
@@ -68,6 +82,7 @@ function LoginPage() {
 
           <button
             disabled={!isValid}
+            onClick={onSubmit}
             className={`w-full py-3 rounded transition ${
               !isValid
                 ? "bg-gray-700 text-gray-400 cursor-not-allowed"

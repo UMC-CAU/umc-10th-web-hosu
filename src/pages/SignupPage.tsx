@@ -10,7 +10,7 @@ import {
   type PasswordFormData,
   type ProfileFormData,
 } from "../schemas/auth";
-import useLocalStorage from "../hooks/useLocalStorage";
+import { signup } from "../apis/auth";
 
 type Step = "email" | "password" | "profile";
 
@@ -20,10 +20,6 @@ export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
 
-  const [, setToken] = useLocalStorage<string | null>("token", null);
-  const [, setUser] = useLocalStorage<{ email: string; nickname: string } | null>("user", null);
-
-  // 단계별로 입력 데이터 보존
   const [savedEmail, setSavedEmail] = useState("");
   const [savedPassword, setSavedPassword] = useState("");
 
@@ -55,18 +51,8 @@ export default function SignupPage() {
     setStep("profile");
   });
 
-  const handleSignup = profileForm.handleSubmit((data) => {
-    // 실제 API 연동 전까지 모의 토큰 저장
-    const mockToken = `mock-token-${Date.now()}`;
-    setToken(mockToken);
-    setUser({ email: savedEmail, nickname: data.nickname });
-
-    console.log("회원가입 완료:", {
-      email: savedEmail,
-      password: savedPassword,
-      nickname: data.nickname,
-    });
-
+  const handleSignup = profileForm.handleSubmit(async (data) => {
+    await signup(savedEmail, savedPassword, data.nickname);
     navigate("/");
   });
 
