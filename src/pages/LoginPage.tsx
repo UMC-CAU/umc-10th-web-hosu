@@ -1,17 +1,15 @@
-import { useNavigate } from "react-router-dom";
-import { useGoogleLogin } from "@react-oauth/google";
+import { useNavigate, useLocation } from "react-router-dom";
 import useForm from "../hooks/useForm";
 import { login } from "../apis/auth";
 
 function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = (location.state as { from?: string })?.from ?? "/";
 
-  const googleLogin = useGoogleLogin({
-    onSuccess: (tokenResponse) => {
-      localStorage.setItem("accessToken", tokenResponse.access_token);
-      navigate("/");
-    },
-  });
+  const handleGoogleLogin = () => {
+    window.location.href = `${import.meta.env.VITE_API_BASE_URL}/auth/google/login`;
+  };
 
   const { values, errors, touched, getInputProps, isValid } = useForm({
     initialValues: { email: "", password: "" },
@@ -29,7 +27,7 @@ function LoginPage() {
 
   const onSubmit = async () => {
     await login(values.email, values.password);
-    navigate("/");
+    navigate(from, { replace: true });
   };
 
   return (
@@ -41,7 +39,7 @@ function LoginPage() {
             <h1 className="text-xl font-semibold w-full text-center">로그인</h1>
           </div>
 
-          <button onClick={() => googleLogin()} className="flex items-center justify-center gap-3 w-full border border-gray-600 py-3 rounded hover:bg-gray-800 transition">
+          <button onClick={handleGoogleLogin} className="flex items-center justify-center gap-3 w-full border border-gray-600 py-3 rounded hover:bg-gray-800 transition">
             <img
               src="https://www.svgrepo.com/show/475656/google-color.svg"
               alt="google"

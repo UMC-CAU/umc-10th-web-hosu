@@ -52,8 +52,12 @@ export default function SignupPage() {
   });
 
   const handleSignup = profileForm.handleSubmit(async (data) => {
-    await signup(savedEmail, savedPassword, data.nickname);
-    navigate("/");
+    try {
+      await signup(savedEmail, savedPassword, data.nickname);
+      navigate("/");
+    } catch (e) {
+      console.error(e);
+    }
   });
 
   const handleBack = () => {
