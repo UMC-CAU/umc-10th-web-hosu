@@ -1,9 +1,21 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { logout } from "../apis/auth";
+import { getMe, logout } from "../apis/auth";
 
-export default function Navbar() {
+interface NavbarProps {
+  onToggle?: () => void;
+}
+
+export default function Navbar({ onToggle }: NavbarProps) {
   const navigate = useNavigate();
   const isLoggedIn = !!localStorage.getItem("accessToken");
+  const [name, setName] = useState("");
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      getMe().then((user) => setName(user.name));
+    }
+  }, [isLoggedIn]);
 
   const handleLogout = () => {
     logout();
@@ -12,15 +24,22 @@ export default function Navbar() {
 
   return (
     <nav className="flex items-center justify-between px-8 py-4 border-b border-gray-800">
-      <div className="text-pink-500 font-bold text-xl cursor-pointer" onClick={() => navigate("/")}>돌려돌려LP판</div>
+      <div className="flex items-center gap-4">
+        <button onClick={onToggle}>☰</button>
+        <div className="text-pink-500 font-bold text-xl cursor-pointer" onClick={() => navigate("/")}>DOLIGO</div>
+      </div>
       <div className="flex gap-3">
         {isLoggedIn ? (
-          <button
+          <div className="flex items-center gap-4">
+            <button>🔍</button>
+            <div>{name}님 반갑습니다.</div>
+            <button
             onClick={handleLogout}
             className="px-4 py-2 border border-white text-white rounded hover:bg-white hover:text-black transition"
-          >
-            로그아웃
-          </button>
+            >
+              로그아웃
+            </button>
+          </div>
         ) : (
           <>
             <button

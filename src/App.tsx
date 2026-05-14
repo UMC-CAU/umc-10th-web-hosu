@@ -1,20 +1,16 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import RootLayout from "./layout/root-layout";
-import NotFound from "./pages/NotFound";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Homepage from "./pages/HomePage";
+import PublicLayout from "./layout/public-layout";
+import LpDetailPage from "./pages/LpDetailPage";
 
 const router = createBrowserRouter([
+  // 공개 페이지 (사이드바 없음)
   {
-    path: '/',
-    element: <RootLayout />,
-    errorElement: <NotFound />,
+    element: <PublicLayout />,
     children: [
-      {
-        index: true,
-        element: <LoginPage />,
-      },
       {
         path: '/login',
         element: <LoginPage />,
@@ -23,19 +19,28 @@ const router = createBrowserRouter([
         path: '/signup',
         element: <SignupPage />
       },
-      {
-        element: <ProtectedRoute />,
-        children: [
-          // { path: '/me', element: <MyPage /> },
-          // { path: '/users/:userId', element: <UserPage /> },
-          // { path: 'lps/user', element: <MyLpsPage /> },
-          // { path: 'lps/:lpId/comments', element: <LpCommentPage /> },
-          // { path: 'lps/likes/me', element: <MyLikeListPage /> },
-          // { path: 'lps/likes/:userId', element: <UserLikeListPage /> },
-        ]
-      }
     ],
   },
+  // 보호된 페이지 (사이드바 있음)
+  {
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: '/',
+        element: <Homepage />,
+      },
+      {
+        path: '/lp/:lpId',
+        element: <LpDetailPage />,
+      },
+      // { path: '/me', element: <MyPage /> },
+      // { path: '/users/:userId', element: <UserPage /> },
+      // { path: 'lps/user', element: <MyLpsPage /> },
+      // { path: 'lps/:lpId/comments', element: <LpCommentPage /> },
+      // { path: 'lps/likes/me', element: <MyLikeListPage /> },
+      // { path: 'lps/likes/:userId', element: <UserLikeListPage /> },
+    ]
+  }
 ]);
 
 function App() {
