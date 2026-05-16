@@ -51,37 +51,16 @@ export const getLpById = async (lpId: number): Promise<LpDetail> => {
   return data.data;
 };
 
-export interface CommentAuthor {
-  id: number;
-  name: string;
-  email: string;
-  bio: string | null;
-  avatar: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface Comment {
-  id: number;
+export interface CreateLpRequest {
+  title: string;
   content: string;
-  lpId: number;
-  authorId: number;
-  createdAt: string;
-  updatedAt: string;
-  author: CommentAuthor;
+  thumbnail: string;
+  tags: string[];
+  published: boolean;
 }
 
-export interface CommentListResponse {
-  data: Comment[];
-  nextCursor: number;
-  hasNext: boolean;
-}
-
-export const getComments = async (
-  lpId: number,
-  params: { cursor?: number; limit?: number; order?: LpOrder }
-): Promise<CommentListResponse> => {
-  const { data } = await axiosInstance.get(`/lps/${lpId}/comments`, { params });
+export const createLp = async (body: CreateLpRequest): Promise<Lp> => {
+  const { data } = await axiosInstance.post("/lps", body);
   return data.data;
 };
 
@@ -93,4 +72,21 @@ export const getLps = async (params: {
 }): Promise<LpListResponse> => {
   const { data } = await axiosInstance.get("/lps", { params });
   return data.data;
+};
+
+export interface UpdateLpRequest {
+  title?: string;
+  content?: string;
+  thumbnail?: string;
+  tags?: string[];
+  published?: boolean;
+}
+
+export const updateLp = async (lpId: number, body: UpdateLpRequest): Promise<Lp> => {
+  const { data } = await axiosInstance.patch(`/lps/${lpId}`, body);
+  return data.data;
+};
+
+export const deleteLp = async (lpId: number): Promise<void> => {
+  await axiosInstance.delete(`/lps/${lpId}`);
 };
