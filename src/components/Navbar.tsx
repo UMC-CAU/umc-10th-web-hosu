@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { getMe, logout } from "../apis/auth";
 
@@ -17,9 +18,15 @@ export default function Navbar({ onToggle }: NavbarProps) {
     }
   }, [isLoggedIn]);
 
+  const { mutate: logoutMutate } = useMutation({
+    mutationFn: async () => logout(),
+    onSuccess: () => {
+      navigate("/login");
+    },
+  });
+
   const handleLogout = () => {
-    logout();
-    navigate("/login");
+    logoutMutate();
   };
 
   return (
