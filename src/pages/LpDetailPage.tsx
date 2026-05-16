@@ -14,6 +14,7 @@ import { useUpdateComment } from "../hooks/comment/useUpdateComment";
 import { useDeleteComment } from "../hooks/comment/useDeleteComment";
 import { useEditLpForm } from "../hooks/lp/useEditLpForm";
 import { useDeleteLp } from "../hooks/lp/useDeleteLp";
+import { useLikeLp } from "../hooks/lp/useLikeLp";
 import Modal from "../components/Modal";
 
 export default function LpDetailPage() {
@@ -48,6 +49,9 @@ export default function LpDetailPage() {
   const { mutate: updateComment } = useUpdateComment(Number(lpId));
   const { mutate: deleteComment } = useDeleteComment(Number(lpId));
   const { mutate: deleteLpMutate, isPending: isDeleting } = useDeleteLp();
+
+  const isLiked = !!me && !!lp?.likes.some((l) => l.userId === me.id);
+  const { mutate: toggleLike } = useLikeLp(Number(lpId), me?.id);
 
   const handleDeleteLp = () => {
     deleteLpMutate(Number(lpId), { onSuccess: () => navigate("/") });
@@ -135,7 +139,10 @@ export default function LpDetailPage() {
 
         {/* 좋아요 */}
         <div className="flex justify-center">
-          <button className="flex items-center gap-2 text-pink-500 hover:text-pink-400 transition text-lg font-medium">
+          <button
+            onClick={() => toggleLike(isLiked)}
+            className={`flex items-center gap-2 transition text-lg font-medium ${isLiked ? "text-pink-500 hover:text-pink-400" : "text-gray-400 hover:text-pink-400"}`}
+          >
             ♥ <span>{lp.likes.length}</span>
           </button>
         </div>

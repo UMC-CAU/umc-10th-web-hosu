@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { getMe, logout } from "../apis/auth";
 
@@ -10,13 +9,12 @@ interface NavbarProps {
 export default function Navbar({ onToggle }: NavbarProps) {
   const navigate = useNavigate();
   const isLoggedIn = !!localStorage.getItem("accessToken");
-  const [name, setName] = useState("");
 
-  useEffect(() => {
-    if (isLoggedIn) {
-      getMe().then((user) => setName(user.name));
-    }
-  }, [isLoggedIn]);
+  const { data: me } = useQuery({
+    queryKey: ["me"],
+    queryFn: getMe,
+    enabled: isLoggedIn,
+  });
 
   const { mutate: logoutMutate } = useMutation({
     mutationFn: async () => logout(),
@@ -39,7 +37,7 @@ export default function Navbar({ onToggle }: NavbarProps) {
         {isLoggedIn ? (
           <div className="flex items-center gap-4">
             <button>🔍</button>
-            <div>{name}님 반갑습니다.</div>
+            <div>{me?.name}님 반갑습니다.</div>
             <button
             onClick={handleLogout}
             className="px-4 py-2 border border-white text-white rounded hover:bg-white hover:text-black transition"

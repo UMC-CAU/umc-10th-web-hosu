@@ -90,3 +90,12 @@ export const updateLp = async (lpId: number, body: UpdateLpRequest): Promise<Lp>
 export const deleteLp = async (lpId: number): Promise<void> => {
   await axiosInstance.delete(`/lps/${lpId}`);
 };
+
+export const likeLp = async (lpId: number): Promise<LpLike> => {
+  const { data } = await axiosInstance.post(`/lps/${lpId}/likes`);
+  return data.data;
+};
+
+export const unlikeLp = async (lpId: number): Promise<void> => {
+  await axiosInstance.delete(`/lps/${lpId}/likes`);
+};
