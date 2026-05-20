@@ -1,11 +1,11 @@
-—
-name: Feature
-about: 프론트 기능 개발을 위한 이슈 템플릿
-title: "[Feature] 기능 이름"
+---
+name: Feature request
+about: Suggest an idea for this project
+title: ''
 labels: ''
 assignees: ''
 
-—
+---
 
 ## 🧩 개요
 어떤 기능을 추가하거나 어떤 문제를 해결할 것인지 간단히 작성하세요.
