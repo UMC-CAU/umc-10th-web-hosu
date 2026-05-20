@@ -19,7 +19,7 @@ export function useUpdateMe() {
         queryClient.setQueryData(["me"], context.previous);
       }
     },
-    onSuccess: () => {
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["me"] });
     },
   });
