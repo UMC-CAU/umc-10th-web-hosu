@@ -22,6 +22,11 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, onClose]);
 
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [isOpen]);
+
   const { mutate: deleteAccountMutate, isPending } = useMutation({
     mutationFn: deleteAccount,
     onSuccess: () => {
