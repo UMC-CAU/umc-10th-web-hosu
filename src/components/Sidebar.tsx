@@ -22,18 +22,22 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   return (
     <>
-      {/* 모바일 배경 오버레이 */}
-      {isOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-30 md:hidden"
-          onClick={onClose}
-        />
-      )}
+      {/* 배경 오버레이 - 항상 렌더링 후 opacity로 fade */}
+      <div
+        onClick={onClose}
+        className={`
+          fixed inset-0 bg-black/50 z-30 md:hidden
+          transition-opacity duration-300 ease-in-out
+          ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}
+        `}
+      />
 
       <aside className={`
-        fixed top-0 left-0 h-full z-40 transition-transform duration-300
+        fixed top-0 left-0 h-full z-40
+        transition-transform duration-300 ease-in-out
         md:static md:z-auto md:h-auto md:translate-x-0
         w-48 bg-gray-900 border-r border-gray-800 flex flex-col justify-between py-6 px-4
+        shadow-xl md:shadow-none
         ${isOpen ? "translate-x-0" : "-translate-x-full"}
       `}>
         <div className="flex flex-col gap-4 mt-16 md:mt-0">
