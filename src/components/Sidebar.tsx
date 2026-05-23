@@ -1,4 +1,8 @@
-import { useNavigate } from "react-router-dom"
+import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import { deleteAccount } from "../apis/auth";
+import Modal from "./Modal";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -7,6 +11,14 @@ interface SidebarProps {
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const navigate = useNavigate();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const { mutate: deleteAccountMutate, isPending } = useMutation({
+    mutationFn: deleteAccount,
+    onSuccess: () => {
+      navigate("/login");
+    },
+  });
 
   return (
     <>
@@ -32,10 +44,34 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             👤 마이페이지
           </button>
         </div>
-        <button className="text-gray-400 hover:text-white text-sm">
+        <button
+          onClick={() => setShowDeleteModal(true)}
+          className="text-gray-400 hover:text-white text-sm"
+        >
           탈퇴하기
         </button>
       </aside>
+
+      <Modal isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)}>
+        <div className="flex flex-col items-center gap-6 py-4">
+          <p className="text-white text-base">정말 탈퇴하시겠습니까?</p>
+          <div className="flex gap-4">
+            <button
+              onClick={() => deleteAccountMutate()}
+              disabled={isPending}
+              className="px-8 py-2 border border-gray-400 text-white rounded hover:bg-gray-700 transition disabled:opacity-50"
+            >
+              예
+            </button>
+            <button
+              onClick={() => setShowDeleteModal(false)}
+              className="px-5 py-2 bg-pink-500 text-white rounded hover:bg-pink-600 transition"
+            >
+              아니오
+            </button>
+          </div>
+        </div>
+      </Modal>
     </>
   )
 }

@@ -4,7 +4,7 @@ import AuthLayout from "../layout/auth-layout";
 
 export default function ProtectedRoute() {
   const token = localStorage.getItem("accessToken");
-  const location = useLocation();
+  const location = useLocation(); // Change to logged-in, it shows page to visit
   const [confirmed, setConfirmed] = useState(false);
 
   if (!token) {

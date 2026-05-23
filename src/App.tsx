@@ -1,10 +1,11 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
-import SignupPage from "./pages/SignupPage";
+import SignupPage from "./pages/signup/SignupPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Homepage from "./pages/HomePage";
 import PublicLayout from "./layout/public-layout";
 import LpDetailPage from "./pages/LpDetailPage";
+import MyPage from "./pages/MyPage";
 
 const router = createBrowserRouter([
   // 공개 페이지 (사이드바 없음)
@@ -33,7 +34,7 @@ const router = createBrowserRouter([
         path: '/lp/:lpId',
         element: <LpDetailPage />,
       },
-      // { path: '/me', element: <MyPage /> },
+      { path: '/me', element: <MyPage /> },
       // { path: '/users/:userId', element: <UserPage /> },
       // { path: 'lps/user', element: <MyLpsPage /> },
       // { path: 'lps/:lpId/comments', element: <LpCommentPage /> },

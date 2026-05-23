@@ -1,4 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 import useForm from "../hooks/useForm";
 import { login } from "../apis/auth";
 
@@ -25,9 +26,15 @@ function LoginPage() {
     },
   });
 
-  const onSubmit = async () => {
-    await login(values.email, values.password);
-    navigate(from, { replace: true });
+  const { mutate: loginMutate, isPending } = useMutation({
+    mutationFn: () => login(values.email, values.password),
+    onSuccess: () => {
+      navigate(from, { replace: true });
+    },
+  });
+
+  const onSubmit = () => {
+    loginMutate();
   };
 
   return (
@@ -79,7 +86,7 @@ function LoginPage() {
           </div>
 
           <button
-            disabled={!isValid}
+            disabled={!isValid || isPending}
             onClick={onSubmit}
             className={`w-full py-3 rounded transition ${
               !isValid

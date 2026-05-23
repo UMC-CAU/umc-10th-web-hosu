@@ -9,8 +9,8 @@ import {
   type EmailFormData,
   type PasswordFormData,
   type ProfileFormData,
-} from "../schemas/auth";
-import { signup } from "../apis/auth";
+} from "../../schemas/auth";
+import { signup } from "../../apis/auth";
 
 type Step = "email" | "password" | "profile";
 
