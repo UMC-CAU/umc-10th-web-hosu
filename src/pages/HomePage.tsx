@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { type LpOrder } from "../apis/lp";
 import { useLps } from "../hooks/lp/useLps";
+import useDebounce from "../hooks/useDebounce";
 import { useCreateLp } from "../hooks/comment/useCreateLp";
 import { useCreateLpForm } from "../hooks/lp/useCreateLpForm";
 import LpCard from "../components/LpCard";
@@ -12,6 +13,8 @@ import { FALLBACK_IMAGE } from "../constants";
 export default function Homepage() {
   const [sort, setSort] = useState<LpOrder>("asc");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const debouncedQuery = useDebounce(searchQuery, 300);
 
   const {
     lpTitle, setLpTitle,
@@ -40,7 +43,7 @@ export default function Homepage() {
   };
 
   const { data, isPending, isError, refetch, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useLps(sort);
+    useLps(sort, debouncedQuery);
 
   const hasNextPageRef = useRef(hasNextPage);
   const isFetchingNextPageRef = useRef(isFetchingNextPage);
@@ -81,6 +84,15 @@ export default function Homepage() {
 
   return (
     <>
+      <div className="mb-4">
+        <input
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="LP 검색..."
+          className="w-full bg-zinc-800 text-white text-sm rounded-lg px-4 py-2 outline-none border border-zinc-700 focus:border-pink-500 transition placeholder-gray-500"
+        />
+      </div>
+
       <div className="flex justify-end gap-2">
         <button
           className={`border rounded px-3 py-1 ${sort === "asc" ? "bg-pink-500 text-white" : ""}`}
