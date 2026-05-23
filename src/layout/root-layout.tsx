@@ -1,16 +1,16 @@
-import { useState } from "react"
 import { Outlet } from "react-router-dom"
 import Navbar from "../components/Navbar"
 import Sidebar from "../components/Sidebar";
+import useSidebar from "../hooks/useSidebar";
 
 const RootLayout = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { isOpen, toggle, close } = useSidebar();
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
-      <Navbar onToggle={() => setIsSidebarOpen((prev) => !prev)} />
+      <Navbar onToggle={toggle} />
       <div className="flex flex-1">
-        <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+        <Sidebar isOpen={isOpen} onClose={close} />
         <main className="flex-1">
           <Outlet />
         </main>
