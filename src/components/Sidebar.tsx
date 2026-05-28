@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { deleteAccount } from "../apis/auth";
@@ -13,6 +13,20 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const navigate = useNavigate();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
+
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [isOpen]);
+
   const { mutate: deleteAccountMutate, isPending } = useMutation({
     mutationFn: deleteAccount,
     onSuccess: () => {
@@ -22,18 +36,22 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   return (
     <>
-      {/* 모바일 배경 오버레이 */}
-      {isOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-30 md:hidden"
-          onClick={onClose}
-        />
-      )}
+      {/* 배경 오버레이 - 항상 렌더링 후 opacity로 fade */}
+      <div
+        onClick={onClose}
+        className={`
+          fixed inset-0 bg-black/50 z-30 md:hidden
+          transition-opacity duration-300 ease-in-out
+          ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}
+        `}
+      />
 
       <aside className={`
-        fixed top-0 left-0 h-full z-40 transition-transform duration-300
+        fixed top-0 left-0 h-full z-40
+        transition-transform duration-300 ease-in-out
         md:static md:z-auto md:h-auto md:translate-x-0
         w-48 bg-gray-900 border-r border-gray-800 flex flex-col justify-between py-6 px-4
+        shadow-xl md:shadow-none
         ${isOpen ? "translate-x-0" : "-translate-x-full"}
       `}>
         <div className="flex flex-col gap-4 mt-16 md:mt-0">

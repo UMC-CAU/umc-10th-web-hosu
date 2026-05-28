@@ -1,6 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { type LpOrder } from "../apis/lp";
 import { useLps } from "../hooks/lp/useLps";
+import useDebounce from "../hooks/useDebounce";
+import useThrottle from "../hooks/useThrottle";
 import { useCreateLp } from "../hooks/comment/useCreateLp";
 import { useCreateLpForm } from "../hooks/lp/useCreateLpForm";
 import LpCard from "../components/LpCard";
@@ -12,6 +14,8 @@ import { FALLBACK_IMAGE } from "../constants";
 export default function Homepage() {
   const [sort, setSort] = useState<LpOrder>("asc");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const debouncedQuery = useDebounce(searchQuery, 300);
 
   const {
     lpTitle, setLpTitle,
@@ -40,47 +44,43 @@ export default function Homepage() {
   };
 
   const { data, isPending, isError, refetch, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useLps(sort);
+    useLps(sort, debouncedQuery);
 
-  const hasNextPageRef = useRef(hasNextPage);
-  const isFetchingNextPageRef = useRef(isFetchingNextPage);
-  const fetchNextPageRef = useRef(fetchNextPage);
-
-  useEffect(() => { hasNextPageRef.current = hasNextPage; }, [hasNextPage]);
-  useEffect(() => { isFetchingNextPageRef.current = isFetchingNextPage; }, [isFetchingNextPage]);
-  useEffect(() => { fetchNextPageRef.current = fetchNextPage; }, [fetchNextPage]);
-
-  // 스크롤 없이 뷰포트가 꽉 차지 않으면 자동으로 다음 페이지 로드
-  useEffect(() => {
-    if (isFetchingNextPage || isPending || !hasNextPage) return;
-    const { scrollHeight, clientHeight } = document.documentElement;
-    if (scrollHeight <= clientHeight + 200) {
-      fetchNextPage();
-    }
-  }, [isFetchingNextPage, isPending, hasNextPage, fetchNextPage]);
+  const [scrollY, setScrollY] = useState(0);
+  const throttledScrollY = useThrottle(scrollY, 1000);
 
   useEffect(() => {
     if (isPending) return;
-
-    const handleScroll = () => {
-      const { scrollY, innerHeight } = window;
-      const { scrollHeight } = document.documentElement;
-
-      if (scrollY + innerHeight >= scrollHeight - 200) {
-        if (hasNextPageRef.current && !isFetchingNextPageRef.current) {
-          fetchNextPageRef.current();
-        }
-      }
-    };
-
+    const handleScroll = () => setScrollY(window.scrollY);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isPending]);
+
+  useEffect(() => {
+    if (isPending || isFetchingNextPage || !hasNextPage) return;
+    const { scrollHeight, clientHeight } = document.documentElement;
+    if (scrollHeight <= clientHeight + 200) {
+      fetchNextPage();
+      return;
+    }
+    if (throttledScrollY + window.innerHeight >= scrollHeight - 200) {
+      fetchNextPage();
+    }
+  }, [throttledScrollY, isPending, isFetchingNextPage, hasNextPage, fetchNextPage]);
 
   const lps = data?.pages.flatMap((page) => page.data) ?? [];
 
   return (
     <>
+      <div className="mb-4">
+        <input
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="LP 검색..."
+          className="w-full bg-zinc-800 text-white text-sm rounded-lg px-4 py-2 outline-none border border-zinc-700 focus:border-pink-500 transition placeholder-gray-500"
+        />
+      </div>
+
       <div className="flex justify-end gap-2">
         <button
           className={`border rounded px-3 py-1 ${sort === "asc" ? "bg-pink-500 text-white" : ""}`}
