@@ -4,13 +4,7 @@ import { increase, decrease, clearCart } from '../features/cart/cartSlice';
 
 export default function Cart() {
   const dispatch = useDispatch();
-  const items = useSelector((state: RootState) => state.cart.items);
-
-  const totalAmount = items.reduce((sum, item) => sum + item.amount, 0);
-  const totalPrice = items.reduce(
-    (sum, item) => sum + Number(item.price) * item.amount,
-    0
-  );
+  const { items, amount, total } = useSelector((state: RootState) => state.cart);
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
@@ -54,8 +48,8 @@ export default function Cart() {
           전체 삭제
         </button>
         <div className="text-center text-gray-700 space-y-1">
-          <p>총 수량: <span className="font-bold">{totalAmount}개</span></p>
-          <p>총 금액: <span className="font-bold">{totalPrice.toLocaleString()}원</span></p>
+          <p>총 수량: <span className="font-bold">{amount}개</span></p>
+          <p>총 금액: <span className="font-bold">{total.toLocaleString()}원</span></p>
         </div>
       </div>
     </div>
