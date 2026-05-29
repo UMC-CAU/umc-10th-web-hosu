@@ -1,10 +1,21 @@
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '../store';
-import { increase, decrease, clearCart } from '../features/cart/cartSlice';
+import {
+  increase,
+  decrease,
+  removeItem,
+  clearCart,
+  calculateTotals,
+} from '../features/cart/cartSlice';
 
 export default function Cart() {
   const dispatch = useDispatch();
   const { items, amount, total } = useSelector((state: RootState) => state.cart);
+
+  useEffect(() => {
+    dispatch(calculateTotals());
+  }, [items, dispatch]);
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
@@ -21,19 +32,28 @@ export default function Cart() {
               <p className="text-sm text-gray-500 mt-0.5">{item.singer}</p>
               <p className="font-bold text-gray-900 mt-1">${item.price}</p>
             </div>
-            <div className="flex items-center gap-2 flex-shrink-0">
+            <div className="flex items-center gap-3 flex-shrink-0">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => dispatch(decrease(item.id))}
+                  className="w-8 h-8 rounded border border-gray-300 bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-lg font-medium"
+                >
+                  -
+                </button>
+                <span className="w-6 text-center font-medium">{item.amount}</span>
+                <button
+                  onClick={() => dispatch(increase(item.id))}
+                  className="w-8 h-8 rounded border border-gray-300 bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-lg font-medium"
+                >
+                  +
+                </button>
+              </div>
               <button
-                onClick={() => dispatch(decrease(item.id))}
-                className="w-8 h-8 rounded border border-gray-300 bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-lg font-medium"
+                onClick={() => dispatch(removeItem(item.id))}
+                className="text-gray-400 hover:text-red-500 text-xl leading-none"
+                aria-label="삭제"
               >
-                -
-              </button>
-              <span className="w-6 text-center font-medium">{item.amount}</span>
-              <button
-                onClick={() => dispatch(increase(item.id))}
-                className="w-8 h-8 rounded border border-gray-300 bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-lg font-medium"
-              >
-                +
+                ×
               </button>
             </div>
           </li>
