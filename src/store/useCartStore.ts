@@ -1,25 +1,6 @@
 import { create } from 'zustand';
 import cartItems from '../constants/cartItems';
-
-export interface CartItem {
-  id: string;
-  title: string;
-  singer: string;
-  price: string;
-  img: string;
-  amount: number;
-}
-
-interface CartState {
-  items: CartItem[];
-  amount: number;
-  total: number;
-  increase: (id: string) => void;
-  decrease: (id: string) => void;
-  removeItem: (id: string) => void;
-  clearCart: () => void;
-  calculateTotals: () => void;
-}
+import type { CartState } from '../types/CartState';
 
 const useCartStore = create<CartState>((set, get) => ({
   items: cartItems,
