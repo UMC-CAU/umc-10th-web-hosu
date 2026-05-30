@@ -1,11 +1,9 @@
-import { useDispatch, useSelector } from 'react-redux';
-import type { RootState } from '../store';
-import { closeModal } from '../features/modal/modalSlice';
-import { clearCart } from '../features/cart/cartSlice';
+import useCartStore from '../store/useCartStore';
+import useModalStore from '../store/useModalStore';
 
 export default function Modal() {
-  const dispatch = useDispatch();
-  const isOpen = useSelector((state: RootState) => state.modal.isOpen);
+  const clearCart = useCartStore((state) => state.clearCart);
+  const { isOpen, closeModal } = useModalStore();
 
   if (!isOpen) return null;
 
@@ -18,15 +16,15 @@ export default function Modal() {
         <div className="flex gap-4">
           <button
             onClick={() => {
-              dispatch(clearCart());
-              dispatch(closeModal());
+              clearCart();
+              closeModal();
             }}
             className="px-6 py-2 bg-[#1e2a3a] text-white rounded hover:bg-[#2c3e55] font-medium"
           >
             네
           </button>
           <button
-            onClick={() => dispatch(closeModal())}
+            onClick={closeModal}
             className="px-3 py-2 border border-gray-400 text-gray-700 rounded hover:bg-gray-100 font-medium"
           >
             아니요

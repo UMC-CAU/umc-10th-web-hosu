@@ -1,21 +1,9 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import type { RootState } from '../store';
-import {
-  increase,
-  decrease,
-  removeItem,
-  calculateTotals,
-} from '../features/cart/cartSlice';
-import { openModal } from '../features/modal/modalSlice';
+import useCartStore from '../store/useCartStore';
+import useModalStore from '../store/useModalStore';
 
 export default function Cart() {
-  const dispatch = useDispatch();
-  const { items, amount, total } = useSelector((state: RootState) => state.cart);
-
-  useEffect(() => {
-    dispatch(calculateTotals());
-  }, [items, dispatch]);
+  const { items, amount, total, increase, decrease, removeItem } = useCartStore();
+  const openModal = useModalStore((state) => state.openModal);
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
@@ -35,21 +23,21 @@ export default function Cart() {
             <div className="flex items-center gap-3 flex-shrink-0">
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => dispatch(decrease(item.id))}
+                  onClick={() => decrease(item.id)}
                   className="w-8 h-8 rounded border border-gray-300 bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-lg font-medium"
                 >
                   -
                 </button>
                 <span className="w-6 text-center font-medium">{item.amount}</span>
                 <button
-                  onClick={() => dispatch(increase(item.id))}
+                  onClick={() => increase(item.id)}
                   className="w-8 h-8 rounded border border-gray-300 bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-lg font-medium"
                 >
                   +
                 </button>
               </div>
               <button
-                onClick={() => dispatch(removeItem(item.id))}
+                onClick={() => removeItem(item.id)}
                 className="text-gray-400 hover:text-red-500 text-xl leading-none"
                 aria-label="삭제"
               >
@@ -62,7 +50,7 @@ export default function Cart() {
 
       <div className="mt-8 flex flex-col items-center gap-4">
         <button
-          onClick={() => dispatch(openModal())}
+          onClick={openModal}
           className="px-8 py-3 border border-gray-400 rounded text-gray-700 hover:bg-gray-100 font-medium"
         >
           전체 삭제
