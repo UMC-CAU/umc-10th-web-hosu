@@ -5,9 +5,9 @@ import {
   increase,
   decrease,
   removeItem,
-  clearCart,
   calculateTotals,
 } from '../features/cart/cartSlice';
+import { openModal } from '../features/modal/modalSlice';
 
 export default function Cart() {
   const dispatch = useDispatch();
@@ -62,7 +62,7 @@ export default function Cart() {
 
       <div className="mt-8 flex flex-col items-center gap-4">
         <button
-          onClick={() => dispatch(clearCart())}
+          onClick={() => dispatch(openModal())}
           className="px-8 py-3 border border-gray-400 rounded text-gray-700 hover:bg-gray-100 font-medium"
         >
           전체 삭제
