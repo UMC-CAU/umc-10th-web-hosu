@@ -18,9 +18,8 @@ interface SearchResponse {
 
 const LANGUAGES = [
   { code: 'ko-KR', label: '한국어' },
-  { code: 'en-US', label: 'English' },
-  { code: 'ja-JP', label: '日本語' },
-  { code: 'zh-CN', label: '中文' },
+  { code: 'en-US', label: '영어' },
+  { code: 'ja-JP', label: '일본어' },
 ]
 
 function App() {
